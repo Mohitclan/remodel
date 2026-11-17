@@ -1,0 +1,48 @@
+[10:26:20] PhiUSIIL: loading
+[10:26:29] PhiUSIIL: shipped-feature audit
+[10:26:43] PhiUSIIL: representation x split x model
+[10:26:43]   featurising R1
+[10:27:02]     R1 random LR  acc=0.9899
+[10:27:21]     R1 random RF  acc=0.9932
+[10:27:26]     R1 random XGB acc=0.9958
+[10:27:30]     R1 domain LR  acc=0.9825
+[10:27:49]     R1 domain RF  acc=0.9909
+[10:27:52]     R1 domain XGB acc=0.9960
+[10:27:52]   featurising R2
+[10:28:07]     R2 random LR  acc=0.8360
+[10:28:34]     R2 random RF  acc=0.8494
+[10:29:13]     R2 random XGB acc=0.8530
+[10:29:16]     R2 domain LR  acc=0.8253
+[10:29:37]     R2 domain RF  acc=0.8335
+[10:29:44]     R2 domain XGB acc=0.8391
+[10:29:44]   featurising R3
+[10:29:59]     R3 random LR  acc=0.7820
+[10:30:16]     R3 random RF  acc=0.8099
+[10:30:20]     R3 random XGB acc=0.8119
+[10:30:21]     R3 domain LR  acc=0.7793
+[10:30:39]     R3 domain RF  acc=0.7910
+[10:30:44]     R3 domain XGB acc=0.7966
+[10:30:44] PhiUSIIL: character n-gram model (domain split)
+[10:31:31]     n-gram R1 acc=0.9955
+[10:32:10]     n-gram R2 acc=0.8773
+[10:32:39]     n-gram R3 acc=0.8457
+[10:32:39] Cross-corpus audit (XGB, domain split)
+[10:33:26]   PhiUSIIL: R1=0.9960 R2=0.8391 R3=0.7966 rule=0.9973
+[10:33:46]   LegitPhish: R1=0.9970 R2=0.9918 R3=0.9264 rule=0.9940
+[10:35:43]   URL-Phish: R1=0.9271 R2=0.9231 R3=0.9206 rule=0.8175
+[10:36:01]   Mowar and Jain: R1=0.7984 R2=0.7875 R3=0.6714 rule=0.5000
+[10:36:01] wrote /Users/admin/galgotia/phishing-audit/results/results.json
+wrote fig_ladder.png
+wrote fig_pipeline.png
+wrote fig_formatting.png
+wrote fig_stumps.png
+wrote fig_accuracy_by_representation.png
+wrote fig_roc.png
+wrote fig_mcnemar.png
+wrote fig_ngram.png
+wrote fig_cross_corpus.png
+wrote fig_base_rate.png
+wrote fig_importance.png
+wrote fig_scores.png
+wrote fig_datasets.png
+wrote fig_app_flow.png

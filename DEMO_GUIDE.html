@@ -1,0 +1,111 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Working Model Demo Guide</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  body { font-family: "Times New Roman", serif; font-size: 11.5pt; color: #111; line-height: 1.35; }
+  h1 { font-size: 18pt; text-align: center; margin: 0 0 2px; }
+  .sub { text-align: center; color: #444; margin-bottom: 12px; }
+  h2 { font-size: 13.5pt; border-bottom: 1.5px solid #222; padding-bottom: 2px; margin: 16px 0 6px; page-break-after: avoid; }
+  table { border-collapse: collapse; width: 100%; margin: 6px 0 8px; page-break-inside: avoid; }
+  th, td { border: 1px solid #555; padding: 4px 6px; vertical-align: top; text-align: left; }
+  th { background: #e8e8e8; }
+  code, .cmd { font-family: Menlo, monospace; font-size: 10pt; }
+  .cmd { display: inline-block; background: #f0f0f0; border: 1px solid #bbb; padding: 2px 8px; border-radius: 3px; font-weight: bold; }
+  .say { background: #f4f8ff; border-left: 4px solid #3466c2; padding: 5px 9px; margin: 5px 0 9px; font-style: italic; }
+  .step { page-break-inside: avoid; margin-bottom: 8px; }
+  .ok { color: #11733a; font-weight: bold; } .bad { color: #b3261e; font-weight: bold; }
+  ul, ol { margin: 4px 0 6px 20px; padding: 0; } li { margin: 2px 0; }
+</style></head><body>
+
+<h1>Working Model: Demo Guide</h1>
+<div class="sub">Phishing Dataset Shortcut Checker · IEEE ICCSAI 2026 Paper 3112 · Mohit Kumar, Mahi Singh · Guide: Mr. Deepak Kumar</div>
+
+<h2>1. Start and stop (one command)</h2>
+<table>
+<tr><th style="width:24%">Type in Terminal</th><th>What it does</th></tr>
+<tr><td><span class="cmd">run start</span></td><td>Checks the three trained models and data are present, starts the app (the Python backend that loads the models and the web page frontend together), waits until it is ready, and opens <b>http://localhost:8501</b> in the browser. Takes about 5 to 10 seconds.</td></tr>
+<tr><td><span class="cmd">run status</span></td><td>Says whether it is running.</td></tr>
+<tr><td><span class="cmd">run demo</span></td><td>Opens this guide.</td></tr>
+<tr><td><span class="cmd">run stop</span></td><td>Stops it.</td></tr>
+</table>
+<p>No internet is needed: the data and models are on the laptop. Without the terminal, you can also double-click <b>Start Phishing Demo</b> on the Desktop.
+If the terminal first asks <code>[y]/[n]</code>, type <b>y</b>, press Enter, then type the command.</p>
+
+<h2>2. The idea in 20 seconds (say this first)</h2>
+<div class="say">"Phishing detectors are tested on public datasets and report about 99% accuracy. We found that in the most-used dataset, PhiUSIIL, every legitimate URL is written as https://www.site with nothing after it, and almost no phishing URL is. So a model can score 99% just by checking the format. Our method, the canonicalisation ladder, trains the same model three times while removing the format step by step. If accuracy falls, the dataset has a shortcut. The app shows this live."</div>
+<p>The app has three models. All three are the same XGBoost classifier trained on the same data; they differ only in what part of the URL they see:</p>
+<table>
+<tr><th>Model</th><th>What it sees</th><th>Accuracy on unseen websites</th></tr>
+<tr><td>A: Raw URL</td><td>The URL exactly as written</td><td>99.60%</td></tr>
+<tr><td>B: Cleaned URL</td><td><code>https://</code>, <code>www.</code> and trailing <code>/</code> removed</td><td>83.91%</td></tr>
+<tr><td>C: Name only</td><td>Only the website name</td><td>79.66%</td></tr>
+</table>
+
+<h2>3. Demo workflow (about 5 minutes)</h2>
+
+<div class="step"><b>Step 1: Valid examples: the model works.</b> Tab <b>Check a URL</b>, row <span class="ok">Valid</span>. Click <code>https://www.doc.govt.nz</code>.
+<ul><li>All three models say <span class="ok">SAFE</span> (A 0.2%, B 9.8%, C 13.9% phishing score).</li>
+<li>Blue box: <i>"True label: LEGITIMATE … the models never saw this URL during training."</i></li></ul>
+<div class="say">"This is a real legitimate website from the test data. The model never saw it in training, and all three models correctly call it safe."</div></div>
+
+<div class="step"><b>Step 2: Invalid examples: phishing is caught.</b> Row <span class="bad">Invalid</span>. Click <code>http://www.77hyhy.com</code>.
+<ul><li>All three say <span class="bad">PHISHING</span> (A 99.7%, B 90.3%, C 90.1%). True label: PHISHING.</li>
+<li>Also try <code>http://xxx-com-dot-c2c01-531c7.uc.r.appspot.com/</code>: 100% phishing on all three.</li></ul>
+<div class="say">"A real phishing URL from the test data. All three models flag it."</div></div>
+
+<div class="step"><b>Step 3: The shortcut (main result).</b> Row <b>Same website, different format</b>.
+<table>
+<tr><th>Click</th><th>Model A (raw)</th><th>Model B (cleaned)</th><th>Model C (name)</th></tr>
+<tr><td><code>https://www.wikipedia.org</code></td><td class="ok">SAFE (0.4%)</td><td class="ok">SAFE (20.4%)</td><td class="ok">SAFE (22.5%)</td></tr>
+<tr><td><code>wikipedia.org</code></td><td class="bad">PHISHING (100%)</td><td class="ok">SAFE (20.4%)</td><td class="ok">SAFE (22.5%)</td></tr>
+<tr><td><code>https://www.paypal-account-verify.com</code></td><td class="ok">SAFE (5.9%)</td><td class="bad">PHISHING (53.2%)</td><td class="bad">PHISHING (50.0%)</td></tr>
+<tr><td><code>paypal-account-verify.com</code></td><td class="bad">PHISHING (100%)</td><td class="bad">PHISHING (53.2%)</td><td class="bad">PHISHING (50.0%)</td></tr>
+</table>
+<div class="say">"Same website, Wikipedia. Just removing https://www. makes Model A call it phishing with 100% confidence. And a fake PayPal site becomes safe just by adding https://www. So Model A is not judging the website, it is judging the format. Models B and C give the same answer both times because they never see the format. That is the shortcut our method exposes."</div></div>
+
+<div class="step"><b>Step 4: Your own URL.</b> Type any address in the box (for example a teacher's suggestion) and press Enter. Point to the three cards and to <b>What this means</b>.</div>
+
+<div class="step"><b>Step 5: Compare URLs tab.</b> Shows several URLs side by side in one table, useful for format pairs.</div>
+
+<div class="step"><b>Step 6: Dataset &amp; Model tab</b> (when they ask "show the data / the model").
+<ul><li>Dataset numbers, a table of <b>real rows</b> with true label and each model's answer (✓/✗). Click <b>Show different examples</b> for new rows.</li>
+<li>Model table with accuracy and model files. Expanders: <b>the 24 features</b> and <b>where everything is on this laptop</b>.</li></ul></div>
+
+<div class="step"><b>Step 7: Project results tab.</b> All charts and numbers from the report.</div>
+
+<h2>4. Key numbers to remember</h2>
+<table>
+<tr><th style="width:55%">Fact</th><th>Value</th></tr>
+<tr><td>Dataset (PhiUSIIL, UCI repository, 2024)</td><td>235,795 URLs: 134,850 legitimate, 100,945 phishing</td></tr>
+<tr><td>Train / test split (by website, so test websites are unseen)</td><td>170,546 / 65,249 URLs (70/30, seed 42)</td></tr>
+<tr><td>Model</td><td>XGBoost, 300 trees, depth 6, 24 lexical features</td></tr>
+<tr><td>Accuracy: raw URL, random split → domain split</td><td>99.58% → 99.60% (domain split alone does not fix it)</td></tr>
+<tr><td>Accuracy: cleaned URL / name only (domain split)</td><td>83.91% / 79.66%</td></tr>
+<tr><td>One-line format rule, no AI</td><td>99.73% accurate</td></tr>
+<tr><td>Legitimate URLs matching <code>https://www.site</code></td><td>100% (phishing: only 0.62%)</td></tr>
+<tr><td>Character n-gram model (second model type)</td><td>99.55% → 87.73% → 84.57%</td></tr>
+<tr><td>McNemar test, raw vs cleaned</td><td>10,337 vs 94 changed answers, χ² = 10,056 (p &lt; 0.001)</td></tr>
+<tr><td>Other datasets checked</td><td>LegitPhish, URL-Phish, Mowar &amp; Jain: shortcut much weaker there</td></tr>
+</table>
+
+<h2>5. Questions teachers may ask</h2>
+<table>
+<tr><th style="width:36%">Question</th><th>Answer</th></tr>
+<tr><td>Where is the dataset?</td><td><code>phishing-audit/data/raw/phiusiil/PhiUSIIL_Phishing_URL_Dataset.csv</code>. Also shown in the <b>Dataset &amp; Model</b> tab.</td></tr>
+<tr><td>Where is the model?</td><td><code>phishing-audit/models/xgb_R1.joblib</code>, <code>xgb_R2</code>, <code>xgb_R3</code> (Models A, B, C).</td></tr>
+<tr><td>Where is the code?</td><td><code>phishing-audit/audit/</code>: <code>canon.py</code> (cleans URLs), <code>features.py</code> (24 features), <code>evaluate.py</code> (training and testing). <code>run_audit.py</code> runs all experiments; <code>app.py</code> is the web app.</td></tr>
+<tr><td>Frontend and backend?</td><td>Built with Streamlit (Python). The backend loads the three saved XGBoost models and computes features; the frontend is the web page it serves. <span class="cmd">run start</span> starts both.</td></tr>
+<tr><td>Why is Model A "wrong" if it is 99.6% accurate?</td><td>It is accurate on this dataset only because of how the dataset was collected. On a real URL written differently (e.g. without <code>https://www.</code>) it fails, as the wikipedia.org example shows.</td></tr>
+<tr><td>Is Model B a better phishing detector?</td><td>Not the goal. The project is a <b>diagnostic for datasets</b>: the drop from A to B measures how much a benchmark rewards formatting.</td></tr>
+<tr><td>Did the model see the test URLs?</td><td>No. Test websites are completely separate from training websites (domain-disjoint split).</td></tr>
+<tr><td>Why XGBoost?</td><td>Strong, fast tree model widely used in phishing papers. We also used logistic regression, random forest and a character n-gram model; all show the same drop.</td></tr>
+<tr><td>Can I re-run everything?</td><td>Yes: <code>.venv/bin/python run_audit.py</code> in <code>phishing-audit</code> recomputes all results (a few minutes).</td></tr>
+</table>
+
+<h2>6. If something goes wrong</h2>
+<ul>
+<li>Page does not open: type <span class="cmd">run start</span> again (it restarts cleanly).</li>
+<li>Page looks blank or old: refresh the browser.</li>
+<li>Error message: see <code>phishing-audit/results/app.log</code>.</li>
+</ul>
+</body></html>
