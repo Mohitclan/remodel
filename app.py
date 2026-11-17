@@ -83,7 +83,7 @@ st.caption("Minor Project · IEEE ICCSAI 2026 Paper 3112 · Domain-Disjoint Spli
 with st.sidebar:
     st.header("Quick guide")
     st.markdown(
-        "1. In **Check a URL**, click a valid or invalid example, or type any address.\n"
+        "1. In **Check a URL**, type any web address in the box at the top and press Enter.\n"
         "2. Read the three model cards: each shows what that model saw and its answer.\n"
         "3. Read **What this means** for a plain explanation.\n"
         "4. **Dataset & Model** shows the data and how the models work.\n\n"
@@ -113,7 +113,9 @@ with tabs["check"]:
         st.session_state.url = u
 
     samples = load_samples()
-    st.markdown("**Type any web address, or click an example:**")
+    url = st.text_input("**Type a web address here and press Enter**", key="url",
+                        placeholder="for example: google.com  or  https://www.google.com").strip()
+    st.caption("Click in the box, select the old text (Cmd + A), type a new URL and press Enter.")
     groups = []
     if samples is not None:
         allp = samples[["p_R1", "p_R2", "p_R3"]]
@@ -122,11 +124,11 @@ with tabs["check"]:
         groups += [(":green[**Valid:**] real legitimate websites from the dataset", legit),
                    (":red[**Invalid:**] real phishing websites from the dataset", phish)]
     groups.append(("**Same website, different format** (shows the shortcut)", EXAMPLES))
-    for title, items in groups:
-        st.markdown(title)
-        for c, ex in zip(st.columns(4), items):
-            c.button(ex, on_click=use_example, args=(ex,), width="stretch", key=f"ex-{ex}")
-    url = st.text_input("Web address", key="url", label_visibility="collapsed").strip()
+    with st.expander("Or click a ready-made example"):
+        for title, items in groups:
+            st.markdown(title)
+            for c, ex in zip(st.columns(4), items):
+                c.button(ex, on_click=use_example, args=(ex,), width="stretch", key=f"ex-{ex}")
 
     if url:
         p = score(url)
