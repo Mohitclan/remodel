@@ -24,6 +24,7 @@
 <table>
 <tr><th style="width:24%">Type in Terminal</th><th>What it does</th></tr>
 <tr><td><span class="cmd">run start</span></td><td>Checks the three trained models and data are present, starts the app (the Python backend that loads the models and the web page frontend together), waits until it is ready, and opens <b>http://localhost:8501</b> in the browser. Takes about 5 to 10 seconds.</td></tr>
+<tr><td><span class="cmd">run cli</span></td><td><b>Terminal demo</b>: type URLs by hand and see, step by step, what each model receives, its 24 numbers, which numbers pushed the decision, and the answer (Section 4).</td></tr>
 <tr><td><span class="cmd">run status</span></td><td>Says whether it is running.</td></tr>
 <tr><td><span class="cmd">run demo</span></td><td>Opens this guide.</td></tr>
 <tr><td><span class="cmd">run stop</span></td><td>Stops it.</td></tr>
@@ -73,7 +74,31 @@ If the terminal first asks <code>[y]/[n]</code>, type <b>y</b>, press Enter, the
 
 <div class="step"><b>Step 7: Project results tab.</b> All charts and numbers from the report.</div>
 
-<h2>4. Key numbers to remember</h2>
+<h2>4. Terminal demo (more detail): <span class="cmd">run cli</span></h2>
+<p>Use this when teachers want to see the model working in the terminal. Make the Terminal window wide (full screen). Type a URL and press Enter; the screen shows four steps:</p>
+<table>
+<tr><th style="width:30%">Step on screen</th><th>What to say</th></tr>
+<tr><td><b>STEP 1</b> What each model receives</td><td>"The same URL is rewritten three ways. Model A sees it raw, Model B without https://www., Model C only the website name."</td></tr>
+<tr><td><b>STEP 2</b> The 24 numbers</td><td>"Each model turns its text into 24 numbers: length, dots, digits, symbols, randomness. Rows in magenta differ between models; those differences come only from the formatting."</td></tr>
+<tr><td><b>STEP 3</b> Which numbers pushed the decision</td><td>"For each model, the five numbers that pushed it most. Red pushes towards phishing, green towards safe. For Model A, url_len often dominates: it learned that legitimate URLs have the length of https://www.site."</td></tr>
+<tr><td><b>STEP 4</b> Decision</td><td>Phishing score bar and SAFE / PHISHING for each model.</td></tr>
+<tr><td><b>What this means</b></td><td>True label if the URL is in the dataset, and whether that website was in training or test; the one-line format rule; and whether Models A and B disagree (the shortcut).</td></tr>
+</table>
+<p><b>Commands inside the terminal demo:</b></p>
+<table>
+<tr><th style="width:30%">Type</th><th>Shows</th></tr>
+<tr><td><code>any URL</code></td><td>Full 4-step breakdown. Try <code>wikipedia.org</code>, then <code>https://www.wikipedia.org</code>.</td></tr>
+<tr><td><code>valid</code> / <code>invalid</code></td><td>3 real legitimate / phishing URLs from the test set, with true labels</td></tr>
+<tr><td><code>pairs</code></td><td>Same website in two formats side by side: only Model A flips</td></tr>
+<tr><td><code>compare url1 url2 ...</code></td><td>Any URLs side by side</td></tr>
+<tr><td><code>sample</code></td><td>10 random real test URLs with true label and ✓/✗ for each model (different each time)</td></tr>
+<tr><td><code>dataset</code></td><td>Dataset size, split, file location and random rows from the file</td></tr>
+<tr><td><code>model</code></td><td>Model type, accuracy and model file locations</td></tr>
+<tr><td><code>help</code> / <code>clear</code> / <code>quit</code></td><td>Command list / clear the screen / exit</td></tr>
+</table>
+<p><b>Suggested order:</b> <code>valid</code> → <code>invalid</code> → <code>wikipedia.org</code> (full breakdown) → <code>https://www.wikipedia.org</code> → <code>pairs</code> → <code>sample</code> → a URL the teacher suggests → <code>dataset</code> / <code>model</code> if asked.</p>
+
+<h2>5. Key numbers to remember</h2>
 <table>
 <tr><th style="width:55%">Fact</th><th>Value</th></tr>
 <tr><td>Dataset (PhiUSIIL, UCI repository, 2024)</td><td>235,795 URLs: 134,850 legitimate, 100,945 phishing</td></tr>
@@ -88,7 +113,7 @@ If the terminal first asks <code>[y]/[n]</code>, type <b>y</b>, press Enter, the
 <tr><td>Other datasets checked</td><td>LegitPhish, URL-Phish, Mowar &amp; Jain: shortcut much weaker there</td></tr>
 </table>
 
-<h2>5. Questions teachers may ask</h2>
+<h2>6. Questions teachers may ask</h2>
 <table>
 <tr><th style="width:36%">Question</th><th>Answer</th></tr>
 <tr><td>Where is the dataset?</td><td><code>phishing-audit/data/raw/phiusiil/PhiUSIIL_Phishing_URL_Dataset.csv</code>. Also shown in the <b>Dataset &amp; Model</b> tab.</td></tr>
@@ -102,7 +127,7 @@ If the terminal first asks <code>[y]/[n]</code>, type <b>y</b>, press Enter, the
 <tr><td>Can I re-run everything?</td><td>Yes: <code>.venv/bin/python run_audit.py</code> in <code>phishing-audit</code> recomputes all results (a few minutes).</td></tr>
 </table>
 
-<h2>6. If something goes wrong</h2>
+<h2>7. If something goes wrong</h2>
 <ul>
 <li>Page does not open: type <span class="cmd">run start</span> again (it restarts cleanly).</li>
 <li>Page looks blank or old: refresh the browser.</li>

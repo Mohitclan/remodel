@@ -66,4 +66,5 @@ including the working model, runs without it.
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 ./start_demo.sh            # opens the working model at http://localhost:8501
+.venv/bin/python cli.py     # terminal demo: type URLs, see each model's input, features and decision
 ```
